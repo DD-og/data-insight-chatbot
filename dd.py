@@ -44,81 +44,138 @@ def get_bot_response(message: str) -> str:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Enhanced Custom CSS
+# Enhanced Custom CSS with improved styling
 st.markdown("""
     <style>
-    .stChat {
-        padding: 20px;
-        max-width: 800px;
+    /* Main container styling */
+    .main {
+        max-width: 1200px !important;
+        padding: 2rem;
         margin: 0 auto;
     }
+
+    /* Header styling */
+    .stTitle {
+        color: #1E88E5;
+        font-size: 2.5rem !important;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        border-bottom: 2px solid #E3F2FD;
+    }
+
+    /* Chat container styling */
     .stChatMessage {
-        background-color: #f0f2f6;
-        border-radius: 15px;
-        padding: 15px;
-        margin: 8px 0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
     }
+    
+    /* Message styling */
     .user-message {
-        background-color: #E3F2FD;
+        background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+        margin-left: 2rem;
+        margin-right: 1rem;
     }
+    
     .assistant-message {
-        background-color: #F5F5F5;
+        background: linear-gradient(135deg, #F5F5F5 0%, #E0E0E0 100%);
+        margin-right: 2rem;
+        margin-left: 1rem;
     }
-    .stMarkdown {
-        font-size: 16px;
-        line-height: 1.6;
+
+    /* Chat input styling */
+    .stTextInput {
+        border-radius: 25px !important;
+        padding: 0.75rem 1.5rem !important;
+        border: 2px solid #E3F2FD !important;
+        transition: all 0.3s ease;
     }
+
+    .stTextInput:focus {
+        border-color: #1E88E5 !important;
+        box-shadow: 0 0 0 2px rgba(30,136,229,0.2) !important;
+    }
+
+    /* Sidebar styling */
     .sidebar .stButton > button {
         width: 100%;
-        margin-bottom: 10px;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        background: #1E88E5;
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
     }
 
-    /* Typing indicator animation */
+    .sidebar .stButton > button:hover {
+        background: #1565C0;
+        transform: translateY(-2px);
+    }
+
+    /* Typing indicator styling */
     .typing-indicator {
-        padding: 10px;
+        padding: 1rem;
         display: flex;
         align-items: center;
-    }
-    .typing-indicator span {
-        height: 8px;
-        width: 8px;
-        margin: 0 2px;
-        background-color: #9E9EA1;
-        border-radius: 50%;
-        display: inline-block;
-        animation: blink 1.5s infinite;
-    }
-    .typing-indicator span:nth-child(2) {
-        animation-delay: 0.2s;
-    }
-    .typing-indicator span:nth-child(3) {
-        animation-delay: 0.4s;
-    }
-    @keyframes blink {
-        0% { opacity: 0.1; }
-        20% { opacity: 1; }
-        100% { opacity: 0.1; }
+        justify-content: flex-start;
+        margin-left: 1rem;
     }
 
-    /* Custom input styling */
-    .chat-input-container {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        padding: 20px;
-        background: white;
-        box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    .typing-indicator span {
+        height: 10px;
+        width: 10px;
+        margin: 0 3px;
+        background-color: #1E88E5;
+        border-radius: 50%;
+        display: inline-block;
+        animation: bounce 1.5s infinite;
     }
-    .dark-theme .chat-input-container {
-        background: #262730;
+
+    @keyframes bounce {
+        0%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-10px); }
+    }
+
+    /* Dark theme support */
+    .dark-theme .stTitle {
+        color: #90CAF9;
+    }
+
+    .dark-theme .user-message {
+        background: linear-gradient(135deg, #1E3C5A 0%, #2C5282 100%);
+    }
+
+    .dark-theme .assistant-message {
+        background: linear-gradient(135deg, #2D3748 0%, #1A202C 100%);
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #1E88E5;
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #1565C0;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Streamlit UI
-st.title("Data Insights Chatbot 📊")
+# Update the title with an icon and better formatting
+st.markdown('<h1 class="stTitle">🤖 Data Insights Chatbot</h1>', unsafe_allow_html=True)
 
 # Display chat messages
 for message in st.session_state.messages:
@@ -166,13 +223,15 @@ if prompt := st.chat_input("What's on your mind?"):
             # Reset waiting state
             st.session_state.waiting_for_response = False
 
-# Enhanced sidebar with more options
+# Enhanced sidebar
 with st.sidebar:
-    st.header("Chat Settings")
-    if st.button("Clear Chat", key="clear_chat"):
+    st.markdown("### ⚙️ Chat Settings")
+    if st.button("🗑️ Clear Chat", key="clear_chat"):
         st.session_state.messages = []
         st.rerun()
     
     st.divider()
-    st.markdown("### Chat Information")
-    st.write(f"Messages: {len(st.session_state.messages)}")
+    st.markdown("### 📊 Chat Statistics")
+    st.markdown(f"**Total Messages:** {len(st.session_state.messages)}")
+    if len(st.session_state.messages) > 0:
+        st.markdown(f"**Last Message:** {st.session_state.messages[-1]['timestamp']}")
